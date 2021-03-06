@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Model.Infra.CrossCutting.InversionOfControl;
 
 namespace Model.Application
 {
@@ -26,9 +27,15 @@ namespace Model.Application
         {
             services.AddDbContext<DataContext>(opt => opt.UseInMemoryDatabase("Database"));
             services.AddScoped<DataContext, DataContext>();
+
             //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddControllers().AddNewtonsoftJson();
             
+            services.AddControllers().AddNewtonsoftJson();
+
+            //Register IoCs
+            services.AddServiceDependency();
+            services.AddRepositoryDependency();
+
             //Register swagger
             services.AddSwaggerGen(c => 
             { 

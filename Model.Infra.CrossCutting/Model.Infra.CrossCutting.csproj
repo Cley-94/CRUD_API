@@ -5,11 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Model.Domain\Model.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Shared\" />
+    <ProjectReference Include="..\Model.Infra.Data\Model.Infra.Data.csproj" />
+    <ProjectReference Include="..\Model.Service\Model.Service.csproj" />
   </ItemGroup>
 
 </Project>

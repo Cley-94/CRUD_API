@@ -1,14 +1,13 @@
 ﻿using System;
 using Model.Domain;
-using System.Linq;
 using Model.Domain.Models;
 using Model.Domain.Entities;
 using System.Threading.Tasks;
 using Model.Domain.Responses;
+using Model.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Model.Infra.Data.Context;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 
 namespace Model.Application.Controllers
 {
@@ -16,6 +15,12 @@ namespace Model.Application.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        private readonly IServiceUser _serviceUser;
+
+        public UserController(IServiceUser serviceUser)
+        {
+            _serviceUser = serviceUser;
+        }
 
         /// <summary>
         /// Create an user
@@ -36,22 +41,21 @@ namespace Model.Application.Controllers
         /// <returns>User id registered</returns>
         [HttpPost]
         [Route("usuario")]
-        public async Task<IActionResult> Create([FromServices] DataContext context, [FromBody] User userModel)
+        public async Task<IActionResult> Create([FromBody] User user)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    context.Users.Add(userModel);
-                    await context.SaveChangesAsync();
-                    return Created($"/api/usuario/{userModel.Id}", "user id: " + userModel.Id);
+                    await _serviceUser.Insert(user);
+                    return Created($"/api/usuario/{user.Id}", "user id: " + user.Id);
                 }
                 else
                 {
                     return BadRequest(ModelState);
-                }
-                //return Created($"/api/users/{user?.Id}", user?.Id);
+                } 
             }
+
             catch (Exception ex)
             {
                 return BadRequest(ex);
@@ -88,75 +92,12 @@ namespace Model.Application.Controllers
         /// <returns>User(s) registered</returns>
         [HttpGet]
         [Route("usuarios")]
-        public async Task<List<UserResponse>> GetUsers([FromServices] DataContext context, [FromQuery] FilterRequestModel filterRequest = null)
+        public async Task<List<UserResponse>> GetUsers([FromQuery] FilterRequestModel filterRequest = null)
         {
             try
             {
-                var users = await context.Users.ToListAsync();
-                var userResponse = new List<UserResponse>();
-
-                //Com o nome e ativo VAZIO
-                if (string.IsNullOrEmpty(filterRequest.Name) && filterRequest.IsActive == 0)
-                {
-                        userResponse = users.Select(x => new UserResponse { 
-                                                          Id = x.Id
-                                                          , Name = x.Name
-                                                          , Email = x.Email
-                                                          , Sex = x.Sex
-                                                          , IsActive = x.IsActive
-                                                          , Age = x.CalculateAge()
-                                                          }).ToList();
-                
-                    return userResponse;
-                }
-
-                //COM o nome E ativo Preenchido com valor ativo "1" ou "2"
-                else if (!string.IsNullOrEmpty(filterRequest.Name) && filterRequest.IsActive != 0)
-                {
-                    userResponse = users.Where(u => u.Name == filterRequest.Name && u.IsActive.Equals(filterRequest.IsActive))
-                                        .Select(x => new UserResponse { 
-                                                          Id = x.Id
-                                                          , Name = x.Name
-                                                          , Email = x.Email
-                                                          , Sex = x.Sex
-                                                          , IsActive = x.IsActive
-                                                          , Age = x.CalculateAge()
-                                                          }).ToList();
-                
-                    return userResponse;
-                }
-
-                //Apenas Nome preenchido
-                else if(!string.IsNullOrEmpty(filterRequest.Name))
-                {
-                    userResponse = users.Where(u => u.Name == filterRequest.Name)
-                                        .Select(x => new UserResponse { 
-                                                          Id = x.Id
-                                                          , Name = x.Name
-                                                          , Email = x.Email
-                                                          , Sex = x.Sex
-                                                          , IsActive = x.IsActive  
-                                                          , Age = x.CalculateAge()
-                                                          }).ToList();
-                
-                    return userResponse;
-                }
-
-                //Apenas Ativo preenchido
-                else
-                {
-                    userResponse = users.Where(u => u.IsActive == filterRequest.IsActive)
-                                        .Select(x => new UserResponse { 
-                                                          Id = x.Id
-                                                          , Name = x.Name
-                                                          , Email = x.Email
-                                                          , Sex = x.Sex
-                                                          , IsActive = x.IsActive  
-                                                          , Age = x.CalculateAge()
-                                                          }).ToList();
-                
-                    return userResponse;
-                }
+                var usersFiltered = await _serviceUser.FindByFilters(filterRequest);
+                return usersFiltered;
             }
 
             catch (Exception ex)
@@ -183,33 +124,10 @@ namespace Model.Application.Controllers
         [Route("inativar-usuario")]
         public async Task<IActionResult> UpdatePartialAsync([FromServices] DataContext context, [FromQuery] UserRequestUpdateModel request)
         {
-            var users = await context.Users.FindAsync(request.Id); 
-
             try
             {
-                if (users == null)
-            {
-                return NotFound();
-            }
-            users.IsActive = request.IsActive;
-            context.Entry(users).CurrentValues.SetValues(request.IsActive);
-            context.Entry(users).State = EntityState.Modified;
-
-            if (context.Entry(users).Properties.Any(property => property.IsModified))
-            {
-                await context.SaveChangesAsync();
-            }
-
-                var userResponse = new UserResponse() {
-                    Id = users.Id
-                                                        , Name = users.Name
-                                                        , Email = users.Email
-                                                        , Sex = users.Sex
-                                                        , IsActive = users.IsActive
-                                                        , Age = users.CalculateAge()
-                                                 };
-
-            return Ok(userResponse);
+                var userDisabled = await _serviceUser.DisableUser(request);
+                return Ok(userDisabled);
             }
 
             catch (Exception ex)

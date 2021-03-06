@@ -1,9 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Model.Domain.Entities;
-using Model.Domain.Responses;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Model.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Model.Infra.Data.Context
 {

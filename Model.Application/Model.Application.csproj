@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Model.Domain\Model.Domain.csproj" />
+    <ProjectReference Include="..\Model.Infra.CrossCutting\Model.Infra.CrossCutting.csproj" />
     <ProjectReference Include="..\Model.Service\Model.Service.csproj" />
   </ItemGroup>
 

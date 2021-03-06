@@ -6,12 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Model.Domain\Model.Domain.csproj" />
-    <ProjectReference Include="..\Model.Infra.CrossCutting\Model.Infra.CrossCutting.csproj" />
     <ProjectReference Include="..\Model.Infra.Data\Model.Infra.Data.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
