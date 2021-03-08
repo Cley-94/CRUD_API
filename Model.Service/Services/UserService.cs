@@ -23,32 +23,6 @@ namespace Model.Service.Services
             return await _repositoryUser.AddUser(user);
         }
 
-        public Task<UserResponse> InactiveUser(UserRequestUpdateModel requestInactiveUser)
-        {
-            //var users = await context.Users.FindAsync(request.Id);
-
-            //users.IsActive = request.IsActive;
-            //context.Entry(users).CurrentValues.SetValues(request.IsActive);
-            //context.Entry(users).State = EntityState.Modified;
-
-            //if (context.Entry(users).Properties.Any(property => property.IsModified))
-            //{
-            //    await context.SaveChangesAsync();
-            //}
-
-            //    var userResponse = new UserResponse() {
-            //        Id = users.Id
-            //                                            , Name = users.Name
-            //                                            , Email = users.Email
-            //                                            , Sex = users.Sex
-            //                                            , IsActive = users.IsActive
-            //                                            , Age = users.CalculateAge()
-            //                                     };
-
-
-            throw new NotImplementedException();
-        }
-
         public async Task<List<UserResponse>> FindByFilters(FilterRequestModel requestFilter)
         {
             var usersFiltered = await _repositoryUser.FindByFilters(requestFilter);

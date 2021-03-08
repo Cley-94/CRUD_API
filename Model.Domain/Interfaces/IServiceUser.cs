@@ -9,7 +9,6 @@ namespace Model.Domain.Interfaces
     public interface IServiceUser
     {
         Task<User> Insert(User user);
-        Task<UserResponse> InactiveUser(UserRequestUpdateModel requestInactiveUser);
         Task<List<UserResponse>> FindByFilters(FilterRequestModel requestFilter);
         Task<UserResponse> DisableUser(UserRequestUpdateModel requestDisableUser);
     }

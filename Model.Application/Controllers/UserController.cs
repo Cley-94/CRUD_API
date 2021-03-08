@@ -41,7 +41,7 @@ namespace Model.Application.Controllers
         /// <returns>User id registered</returns>
         [HttpPost]
         [Route("usuario")]
-        public async Task<IActionResult> Create([FromBody] User user)
+        public async Task<IActionResult> CreateUser([FromBody] User user)
         {
             try
             {
@@ -122,7 +122,7 @@ namespace Model.Application.Controllers
         /// <returns>User updated</returns>
         [HttpPatch]
         [Route("inativar-usuario")]
-        public async Task<IActionResult> UpdatePartialAsync([FromServices] DataContext context, [FromQuery] UserRequestUpdateModel request)
+        public async Task<IActionResult> DisableUser([FromServices] DataContext context, [FromQuery] UserRequestUpdateModel request)
         {
             try
             {
